@@ -1,4 +1,4 @@
-# CTFd-Docker-ctfcli-Plugin
+# A [ctfcli](https://github.com/CTFd/ctfcli) plugin for the Docker Challenges plugin for CTFd
 
 A plugin to build docker images of docker challenges directly from ctfcli.
 
