@@ -20,3 +20,8 @@ Then ask the server to build the docker challenge image:
 ```
 ctf plugins docker_challenge_deploy "web/example-challenge"
 ```
+
+If you want to test it to a server of yours:
+```
+ctf plugins docker_challenge_test "web/example-challenge" user@192.168.1.10
+```
