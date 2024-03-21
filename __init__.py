@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # Plugin for CTFcli
 from types import MethodType
-from ctfcli.utils.challenge import (
-	load_challenge,
-	load_installed_challenges,
-)
-from ctfcli.utils.config import generate_session
+#from ctfcli.utils.challenge import (
+#	load_challenge,
+#	load_installed_challenges,
+#)
+from ctfcli.core.challenge import Challenge
+#from ctfcli.utils.config import generate_session
+from ctfcli.core.api import API
 from pathlib import Path
 import click
 import re
@@ -27,12 +29,13 @@ def build_docker(challenge, path):
 		)
 		return False
 
-	s = generate_session()
+	#s = generate_session()
+	s = API()
 	docker_tar = os.path.join(os.path.dirname(path), challenge["deploy"]["docker_challenges"])
 	with open(docker_tar, 'rb') as f:
 		docker_tar_base64 = base64.b64encode(f.read())
 
-	r = s.post('/api/v1/docker_challenges/image-build', allow_redirects=False, stream=True, timeout=(5*60), json={
+	r = s.request('POST', '/api/v1/docker_challenges/image-build', allow_redirects=False, stream=True, timeout=(5*60), json={
 		'repo': docker_info[0],
 		'category': docker_info[1],
 		'name': docker_info[2],
@@ -40,7 +43,7 @@ def build_docker(challenge, path):
 		'file': docker_tar_base64
 	})
 	if r.status_code == 404:
-		r = s.post('/api/v1/docker_challenges/images/build', allow_redirects=False, stream=True, timeout=(5*60), json={
+		r = s.request('POST', '/api/v1/docker_challenges/images/build', allow_redirects=False, stream=True, timeout=(5*60), json={
 			'repo': docker_info[0],
 			'category': docker_info[1],
 			'name': docker_info[2],
@@ -88,7 +91,7 @@ def docker_challenge_deploy(self, challenge=None):
 			path = path / "challenge.yml"
 
 		click.secho(f"Found {path}")
-		challenge = load_challenge(path)
+		challenge = Challenge(path)
 
 		# If not a docker challenge, continue
 		if not (challenge["type"] == 'docker' or challenge["type"] == 'docker-dynamic'):
@@ -127,7 +130,7 @@ def docker_challenge_deploy(self, challenge=None):
 
 		click.secho(f'Loaded {challenge["name"]}', fg="yellow")
 
-		installed_challenges = load_installed_challenges()
+		installed_challenges = Challenge.load_installed_challenges()
 		for c in installed_challenges:
 			if c["name"] == challenge["name"]:
 				break
@@ -157,7 +160,7 @@ def docker_challenge_test(self, challenge=None, creds=None, command=None):
 		path = path / "challenge.yml"
 
 	click.secho(f"Found {path}")
-	challenge = load_challenge(path)
+	challenge = Challenge(path)
 
 	# If not a docker challenge, continue
 	if not (challenge["type"] == 'docker' or challenge["type"] == 'docker-dynamic'):
