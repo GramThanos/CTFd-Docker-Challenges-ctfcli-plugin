@@ -1,14 +1,7 @@
 #!/usr/bin/env python3
 # Plugin for CTFcli
-from types import MethodType
-#from ctfcli.utils.challenge import (
-#	load_challenge,
-#	load_installed_challenges,
-#)
-from ctfcli.core.challenge import Challenge
-#from ctfcli.utils.config import generate_session
-from ctfcli.core.api import API
-from pathlib import Path
+
+# Import system libs
 import click
 import re
 import os
@@ -17,6 +10,12 @@ import json
 import base64
 import requests
 import subprocess
+from pathlib import Path
+from types import MethodType
+
+# Import ctfcli libs
+from ctfcli.core.challenge import Challenge
+from ctfcli.core.api import API
 
 
 def build_docker(challenge, path):
