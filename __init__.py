@@ -241,15 +241,15 @@ def docker_challenge_test(self, challenge=None, creds=None, command=None):
 		command = 'docker inspect --format "{{ .NetworkSettings.Ports }}" docker_challenge_test'
 		result = subprocess.run(f"ssh -t {ssh_id}@{ssh_domain} '{command}'", stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True, check=True)
 		info = result.stdout.strip()
-		match = re.search(r'\{0\.0\.0\.0 (\d+)\}', info)
-		if match:
-			port = match.group(1)
-			click.secho(f'Container is listening on port {port}', fg="bright_black")
-			if ssh_domain == 'direct.labs.play-with-docker.com':
-				click.secho(f'Container is available at http://{ssh_id}-{port}.direct.labs.play-with-docker.com/', fg="bright_black")
-			click.secho(f'HTTP   : http://{ssh_domain}:{port}/', fg="bright_black")
-			click.secho(f'HTTPS  : https://{ssh_domain}:{port}/', fg="bright_black")
-			click.secho(f'NETCAT : nc {ssh_domain} {port}', fg="bright_black")
+		match = re.findall(r'\{0\.0\.0\.0 (\d+)\}', info)
+		if len(match) > 0:
+			for port in match:
+				click.secho(f'Container is listening on port {port}', fg="bright_black")
+				if ssh_domain == 'direct.labs.play-with-docker.com':
+					click.secho(f'Container is available at http://{ssh_id}-{port}.direct.labs.play-with-docker.com/', fg="bright_black")
+				click.secho(f'HTTP   : http://{ssh_domain}:{port}/', fg="bright_black")
+				click.secho(f'HTTPS  : https://{ssh_domain}:{port}/', fg="bright_black")
+				click.secho(f'NETCAT : nc {ssh_domain} {port}', fg="bright_black")
 		elif info == 'map[]':
 			click.secho(f'Container is not running.', fg="red")
 			result = subprocess.run(f"ssh -t {ssh_id}@{ssh_domain} 'docker logs docker_challenge_test'", stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True, check=True)
