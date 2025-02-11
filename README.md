@@ -6,7 +6,7 @@ A plugin to build docker images of docker challenges directly from ctfcli.
 
 Install from the github repository.
 ```
-ctf plugins install https://github.com/GramThanos/CTFd-Docker-ctfcli-Plugin
+ctf plugins install https://github.com/GramThanos/CTFd-Docker-Challenges-ctfcli-plugin.git
 ```
 
 ## Build a docker challenge
