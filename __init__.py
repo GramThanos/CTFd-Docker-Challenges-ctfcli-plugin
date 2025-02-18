@@ -32,7 +32,7 @@ def build_docker(challenge, path):
 	s = API()
 	docker_tar = os.path.join(os.path.dirname(path), challenge["deploy"]["docker_challenges"])
 	with open(docker_tar, 'rb') as f:
-		docker_tar_base64 = base64.b64encode(f.read())
+		docker_tar_base64 = base64.b64encode(f.read()).decode('utf-8')
 
 	r = s.request('POST', '/api/v1/docker_challenges/image-build', allow_redirects=False, stream=True, timeout=(5*60), json={
 		'repo': docker_info[0],
